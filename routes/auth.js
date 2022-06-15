@@ -46,6 +46,19 @@ router.post("/register",async(req,res)=> {
         //save user to database
         const savedUser = await newUser.save();
 
+        const payload = { userId: savedUser._id };
+  
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+          expiresIn: "7d",
+        });
+    
+        res.cookie("access-token", token, {
+          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+        });
+    
+
         const userToReturn = {...savedUser._doc};
         delete userToReturn.password;
 
@@ -111,7 +124,7 @@ router.post("/login", async (req, res) => {
     }
   });
 
-  // @route   GET /api/auth/current
+// @route   GET /api/auth/current
 // @desc    Return the currently authed user
 // @access  Private
 router.get("/current", requiresAuth, (req, res) => {
@@ -125,15 +138,15 @@ router.get("/current", requiresAuth, (req, res) => {
 //   // @route   PUT /api/auth/logout
 //   // @desc    Logout user a clear the cookie
 //   // @access  Private
-//   router.put("/logout", requiresAuth, async (req, res) => {
-//     try {
-//       res.clearCookie("access-token");
+  router.put("/logout", requiresAuth, async (req, res) => {
+    try {
+      res.clearCookie("access-token");
   
-//       return res.json({ success: true });
-//     } catch (err) {
-//       console.log(err);
-//       return res.status(500).send(err.message);
-//     }
-//   });
+      return res.json({ success: true });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send(err.message);
+    }
+  });
 
 module.exports = router;   
