@@ -2,7 +2,7 @@ const express = require('express');
 const router =  express.Router()
 const ToDo= require("../models/ToDo");
 const requiresAuth = require("../middleware/permission");
-
+const validateToDoInput = require("../validation/toDoValidation");
 // @route   GET /api/todos/test
 // @desc    Test the todos route
 // @access  Public
@@ -15,11 +15,11 @@ router.get("/test", (req, res) => {
 // @access  Private
 router.post("/new", requiresAuth, async (req, res) => {
     try {
-    //   const { isValid, errors } = validateToDoInput(req.body);
+      const { isValid, errors } = validateToDoInput(req.body);
   
-    //   if (!isValid) {
-    //     return res.status(400).json(errors);
-    //   }
+      if (!isValid) {
+        return res.status(400).json(errors);
+      }
   
       // create a new todo
       const newToDo = new ToDo({
