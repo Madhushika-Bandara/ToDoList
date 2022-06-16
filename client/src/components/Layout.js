@@ -1,13 +1,24 @@
 import React from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Header from './Header';
+import AuthBox from './AuthBox';
+import { useGlobalContext } from '../context/GlobalContext';
+
 const Layout = () => {
-    return (
+
+    const {fetchingUser} = useGlobalContext();
+
+    return fetchingUser? (
+        <div className="loading">
+            <h1>Loading</h1>
+        </div>
+    ) :(
     <BrowserRouter>
     <Header/>
+
     <Routes>
-        <Route exact path ="/" element={<h1>Home</h1>}/>
-        <Route exact path ="/test" element={<h1>Test</h1>}/>
+        <Route exact path ="/" element={<AuthBox/>}/>
+        <Route exact path ="/register" element={<AuthBox register/>}/>
     </Routes>
     </BrowserRouter>
         );
